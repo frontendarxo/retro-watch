@@ -1,13 +1,8 @@
 // Настройки модели часов.
 // Положи свой файл сюда: src/assets/model/watch.glb — сайт подхватит его сам.
 // Если файла нет, показывается временная 3D-заглушка.
-const found = import.meta.glob('./assets/model/watch.glb', {
-  query: '?url',
-  import: 'default',
-  eager: true,
-}) as Record<string, string>
 
-export const MODEL_URL: string | null = Object.values(found)[0] ?? null
+export const MODEL_URL: string | null = null // 3D-модель больше не используется
 
 // Если модель «смотрит» не на камеру — подкрути поворот (в радианах: x, y, z).
 export const MODEL_ROTATION: [number, number, number] = [0, -Math.PI / 2, 0]
@@ -46,12 +41,7 @@ export const BG_FALLBACK = ['#05030a', '#05030a', '#07040f', '#031a2e', '#14052a
 
 // ---------- Модель руки с часами (необязательно) ----------
 // Файл: src/assets/model/arm.glb. Если нет — используется стилизованная рука-каркас.
-const armFound = import.meta.glob('./assets/model/arm.glb', {
-  query: '?url',
-  import: 'default',
-  eager: true,
-}) as Record<string, string>
-export const ARM_URL: string | null = Object.values(armFound)[0] ?? null
+export const ARM_URL: string | null = null
 export const ARM_ROTATION: [number, number, number] = [0, 0, 0.42]
 export const ARM_SIZE = 3.3
 
