@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { VIDEO } from './config'
+import { ensureFrames, isMobile, loadedCount, manifestReady } from './frames'
 
 const LINES = ['BOOT SEQUENCE 1984', 'LOADING DISPLAY ........ OK', 'SYNC TIME ............... OK']
 
@@ -15,8 +16,26 @@ export default function Loader({ onDone }: { onDone: () => void }) {
   }, [])
 
   useEffect(() => {
+    let stop = false
+    const guard = setTimeout(() => !stop && setProgress(100), 6000)
+    let guardClear = () => {}
+    if (isMobile()) {
+      // телефон: ждём первые кадры первой главы
+      manifestReady.then((m) => {
+        if (stop) return
+        if (!Object.keys(m).length) return setProgress(100)
+        ensureFrames('hero')
+        const t = setInterval(() => {
+          const p = Math.min(100, (loadedCount('hero') / 10) * 100)
+          setProgress(p)
+          if (p >= 100) clearInterval(t)
+        }, 120)
+        guardClear = () => clearInterval(t)
+      })
+      return () => { stop = true; clearTimeout(guard); guardClear() }
+    }
     const src = VIDEO.hero
-    if (!src) { setProgress(100); return }
+    if (!src) { setProgress(100); return () => clearTimeout(guard) }
     const v = document.createElement('video')
     v.muted = true
     v.preload = 'auto'
@@ -28,8 +47,8 @@ export default function Loader({ onDone }: { onDone: () => void }) {
     v.addEventListener('canplaythrough', done)
     v.addEventListener('error', done)
     v.src = src
-    const guard = setTimeout(done, 6000)
     return () => {
+      stop = true
       clearTimeout(guard)
       v.removeEventListener('progress', upd)
       v.removeEventListener('canplaythrough', done)

@@ -209,3 +209,4 @@ p { font-family: 'Inter', system-ui, sans-serif; font-size: clamp(1rem, 1.25vw, 
   .box-list, .order-sub, .sec-buy .sub { display: none; }
   .order { padding: 14px 16px; gap: .6rem; }
 }
+.bgc { image-rendering: auto; }
